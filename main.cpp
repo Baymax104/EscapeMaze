@@ -11,13 +11,18 @@ int main() {
 	int xCurrent = 9;
 	int yCurrent = 2;
 	int key;
+	// 初始化界面
 	initialize(map, flower, jewel, bomb, &ptrName);
 	while (1) {
+		// 存储
 		store(userName, map, flower, jewel, bomb);
+		// 显示信息
 		showInfo(userName);
+		// 鼠标功能
 		if (MouseHit()) {
 			mouseControl(flower, jewel, bomb, map, &ptrName, &xCurrent, &yCurrent);
 		}
+		// 移动功能
 		key = -1;
 		if (_kbhit()) {
 			int pre = _getch();
@@ -44,6 +49,7 @@ int main() {
 				spaceHit(xCurrent, yCurrent, map, flower);
 			}
 		}
+		// 游戏结束
 		if (isGameOver(xCurrent, yCurrent)) {
 			store(userName, map, flower, jewel, bomb);
 			if (MessageBox(GetHWnd(), (LPCSTR)"再来一局?", (LPCSTR)"逃出迷宫", MB_OKCANCEL) == IDOK) {

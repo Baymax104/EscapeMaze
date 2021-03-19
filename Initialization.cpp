@@ -7,6 +7,7 @@ void initialize(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **nam
 	initFile(name, numberOfFlower);
 }
 void initBoundary(Map map[][10], Node* flower, char **name, int& numberOfFlower) {
+	// 读取地图文件
 	FILE* fp = fopen("resource\\map.txt", "r");
 	for (int i = 0; i < 12; i++) {
 		for (int j = 0; j < 10; j++) {
@@ -14,6 +15,8 @@ void initBoundary(Map map[][10], Node* flower, char **name, int& numberOfFlower)
 		}
 	}
 	fclose(fp);
+
+	// 进行界面绘图
 	initgraph(960, 768);
 	loadimage(&wall, (LPCTSTR)"resource\\1.png", 64, 64);
 	loadimage(&background, (LPCTSTR)"resource\\0.png", 640, 768);
@@ -22,6 +25,7 @@ void initBoundary(Map map[][10], Node* flower, char **name, int& numberOfFlower)
 		for (int j = 0; j < 10; j++) {
 			switch (map[i][j].property) {
 			case PATH:
+				//  获取所有的路面背景图
 				getimage(&path[i][j], j * 64, i * 64, 64, 64);
 				break;
 			case WALL:
@@ -47,8 +51,14 @@ void initBoundary(Map map[][10], Node* flower, char **name, int& numberOfFlower)
 	putImageNB("resource\\func4_b.png", "resource\\func4_c.png", 250, 60, 675, 245);
 	putImageNB("resource\\func5_b.png", "resource\\func5_c.png", 250, 60, 675, 315);
 	putImageNB("resource\\func6_b.png", "resource\\func6_c.png", 250, 60, 675, 385);
+
+	// 通过对话框获取用户名
 	enterName(name);
+
+	// 通过对话框获取花的数量
 	numberOfFlower = enterNumber();
+
+	// 取随机数进行花的绘图
 	int x, y;
 	srand((unsigned)time(NULL));
 	int count = 0;
@@ -59,8 +69,9 @@ void initBoundary(Map map[][10], Node* flower, char **name, int& numberOfFlower)
 			if (count == numberOfFlower) {
 				break;
 			}
-			//getimage(&path[y][x], x * 64, y * 64, 64, 64);
 			putImageNB("resource\\3_b.png", "resource\\3.png", 64, 64, x * 64, y * 64);
+
+			// 改变当前位置属性同时创建节点
 			map[y][x].isFLower = FLOWER;
 			create(flower, x, y);
 			count++;
@@ -73,10 +84,14 @@ void initFile(char **name, int numberOfFlower) {
 	time(&now);
 	struct tm* tmNow;
 	tmNow = localtime(&now);
+	// 若输入空用户名, 则初始化为Default
 	if (strcmp((*name), "") == 0) {
-		*name = (char*)"Default";
+		memset(*name, '\0', sizeof(*name));
+		strcpy(*name, "Default");
 	}
 	sprintf(fileName, "AppData\\%s.txt", *name);
+
+	// 初始化写入文件
 	FILE* fp = fopen(fileName, "w");
 	fprintf(fp, "Username:%s\nScore:0\nTime:%d-%d-%d\n", *name, tmNow->tm_year + 1900, 
 			tmNow->tm_mon + 1, tmNow->tm_mday);

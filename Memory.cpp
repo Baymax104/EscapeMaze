@@ -16,24 +16,31 @@ void store(char *name, Map map[][10], Node* flower, Node* jewel, Node* bomb) {
 	time(&now);
 	struct tm* tmNow;
 	tmNow = localtime(&now);
+	// 获取jewel得分、总得分和个数
 	for (int i = 0; jewel->next; i++) {
 		jewel = jewel->next;
 		score += jewel->score;
 		jewelScore[i] = jewel->score;
 		numberOfJewel++;
 	}
+
+	// 获取bomb得分、总得分和个数
 	for (int i = 0; bomb->next; i++) {
 		bomb = bomb->next;
 		score -= bomb->score;
 		bombScore[i] = bomb->score;
 		numberOfBomb++;
 	}
+
+	// 获取花的个数及坐标
 	for (int i = 0; flower->next; i++) {
 		flower = flower->next;
 		position[i].x = flower->x;
 		position[i].y = flower->y;
 		numberOfFlower++;
 	}
+
+	// 获取人的坐标
 	for (int i = 0; i < 12; i++) {
 		for (int j = 0; j < 10; j++) {
 			if (map[i][j].isPerson == PERSON) {
@@ -42,6 +49,8 @@ void store(char *name, Map map[][10], Node* flower, Node* jewel, Node* bomb) {
 			}
 		}
 	}
+
+	// 打开文件写入
 	FILE* fp = fopen(fileName, "w");
 	fprintf(fp, "Username:%s\nScore:%d\n", name, score);
 	fprintf(fp, "Time:%d-%d-%d\n", tmNow->tm_year + 1900, tmNow->tm_mon + 1, tmNow->tm_mday);
@@ -71,14 +80,17 @@ void showInfo(char* name) {
 	char userName[20];
 	char score[10];
 	char timeNow[20];
+	// 获取需要显示的信息
 	FILE* fp = fopen(fileName, "r");
 	fgets(userName, 20, fp);
 	fgets(score, 10, fp);
 	fgets(timeNow, 20, fp);
 	fclose(fp);
+
 	setbkmode(TRANSPARENT);
 	settextcolor(BLACK);
 	settextstyle(40, 15, (LPCTSTR)"Consolas");
+	// 文字输出
 	BeginBatchDraw();
 	putimage(640, 480, &info);
 	outtextxy(675, 510, (LPCTSTR)userName);
@@ -174,10 +186,13 @@ void scanFile(char *fileName, int jewelScore[], int bombScore[], MemoryInfo posi
 	for (int i = 0; i < line; i++) {
 		text[i] = (char*)malloc(sizeof(char) * 50);
 	}
+	// 读取文本
 	rewind(fp);
 	for (int i = 0; i < line; i++) {
 		fgets(text[i], 50, fp);
 	}
+	fclose(fp);
+	// 读取文本数据
 	sscanf(text[5], "x = %d y = %d", &position[0].x, &position[0].y);
 	sscanf(text[7], "Acquired Jewel:%d", numberOfJewel);
 	sscanf(text[9], "Acquired Bomb:%d", numberOfBomb);
@@ -190,7 +205,7 @@ void scanFile(char *fileName, int jewelScore[], int bombScore[], MemoryInfo posi
 	for (int i = 14, k = 1; i < line; i++, k++) {
 		sscanf(text[i], "x = %d y = %d", &position[k].x, &position[k].y);
 	}
-	fclose(fp);
+	// 释放空间
 	for (int i = 0; i < line; i++) {
 		free(text[i]);
 	}

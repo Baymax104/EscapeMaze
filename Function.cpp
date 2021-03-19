@@ -10,7 +10,7 @@ void move(int& x, int& y,int direction,
 	bool stop = false;
 	int crossing = 0;
 	int isFlower = 0;
-	// 吃掉
+	// 吃掉花、刷新人的坐标
 	if (map[y][x].isPerson == PERSON) {
 		map[y][x].isPerson = 0;
 		if (map[y][x].isFLower == FLOWER) {
@@ -19,6 +19,8 @@ void move(int& x, int& y,int direction,
 		}
 	}
 	putimage(x * 64, y * 64, &temp);
+
+	// 移动
 	while (1) {
 		BeginBatchDraw();
 		switch (direction) {
@@ -196,12 +198,15 @@ void move(int& x, int& y,int direction,
 }
 void spaceHit(int x, int y, Map map[][10], Node *flower) {
 	Node* current = flower;
+	// 通过坐标定位
 	while (current->next) {
 		current = current->next;
 		if (current->x == x && current->y == y) {
 			break;
 		}
 	}
+
+	// 判断该位置上花的状态
 	if (map[y][x].isFLower == FLOWER  && map[y][x].isPerson == PERSON && current->isExpose == false) {
 		if (current->status == JEWEL) {
 			putimage(x * 64, y * 64, &path[y][x]);
@@ -222,6 +227,7 @@ void spaceHit(int x, int y, Map map[][10], Node *flower) {
 void mouseControl(Node* flower, Node* jewel, Node* bomb, Map map[][10], char **name, int *x, int *y) {
 	MOUSEMSG m;
 	m = GetMouseMsg();
+	// 通过mouseBounce连接函数
 	mouseBounce(35, 95, m, "resource\\func1_c.png", "resource\\func1_b.png", "resource\\func1_cc.png",
 				map, flower, jewel, bomb, name, display);
 	mouseBounce(105, 165, m, "resource\\func2_c.png", "resource\\func2_b.png", "resource\\func2_cc.png",
@@ -232,6 +238,8 @@ void mouseControl(Node* flower, Node* jewel, Node* bomb, Map map[][10], char **n
 				map, flower, jewel, bomb, name, quit);
 	mouseBounce(315, 375, m, "resource\\func5_c.png", "resource\\func5_b.png", "resource\\func5_cc.png",
 				map, flower, jewel, bomb, name, conserveData);
+
+	// importData参数不同, 需要当前坐标
 	if ((m.x >= 675 && m.x <= 925) && (m.y >= 385 && m.y <= 445) && m.uMsg == WM_LBUTTONDOWN) {
 		putImageNB("resource\\func6_b.png", "resource\\func6_cc.png", 250, 60, 675, 385);
 	}
@@ -262,6 +270,8 @@ void mouseBounce(int y1, int y2, MOUSEMSG m, const char* img, const char* imgBac
 }
 void display(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name) {
 	Node* fCurrent = flower->next;
+
+	// 通过链表判断当前的花是否暴露
 	while (fCurrent != NULL) {
 		if (fCurrent->status == JEWEL && fCurrent->isExpose == false && 
 			map[fCurrent->y][fCurrent->x].isFLower == FLOWER && 
@@ -307,14 +317,19 @@ void display(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name) 
 	}
 }
 void increase(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name) {
+	// 获取随机数坐标
 	srand((unsigned)time(NULL));
 	int x = rand() % 10;
 	int y = rand() % 12;
 	int count = 0;
+
+	// 通过循环不断取到符合条件的坐标
 	while (1) {
 		if (map[y][x].property == PATH && map[y][x].isFLower != FLOWER && map[y][x].isPerson != PERSON) {
 			create(flower, x, y);
 			Node* s = flower->next;
+
+			// 根据链表判断当前花是否暴露
 			if (s->next) {
 				if (s->next->isExpose == true) {
 					switch (s->status) {
@@ -347,6 +362,8 @@ void increase(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name)
 			}
 			break;
 		}
+
+		// 判断当前花的数量, 不大于47
 		Node* current = flower;
 		while (current->next) {
 			current = current->next;
@@ -357,6 +374,8 @@ void increase(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name)
 		} else {
 			count = 0;
 		}
+
+		// 继续取随机数
 		x = rand() % 10;
 		y = rand() % 12;
 	}
@@ -366,9 +385,13 @@ void empty(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name) {
 	if (selection == IDOK) {
 		for (int i = 0; i < 12; i++) {
 			for (int j = 0; j < 10; j++) {
+
+				// 将有花的位置清空
 				if (map[i][j].isFLower == FLOWER) {
 					putimage(j * 64, i * 64, &path[i][j]);
 					map[i][j].isFLower = 0;
+
+					// 若花上有人，则重新贴人
 					if (map[i][j].isPerson == PERSON) {
 						putImageNB("resource\\2_b.png", "resource\\2.png", 64, 64, j * 64, i * 64);
 					}
@@ -378,12 +401,13 @@ void empty(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name) {
 		clear(flower);
 		clear(jewel);
 		clear(bomb);
-		//initFile(name, 0);
+		initFile(name, 0);
 	}
 }
 void quit(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name) {
 	int selection = MessageBox(GetHWnd(), (LPCSTR)"确定要退出游戏吗?", (LPCSTR)"逃出迷宫", MB_OKCANCEL |									MB_ICONQUESTION);
 	if (selection == IDOK) {
+		// 存储后退出整个程序
 		store(*name, map, flower, jewel, bomb);
 		exit(EXIT_SUCCESS);
 	}
@@ -392,7 +416,6 @@ bool isGameOver(int x, int y) {
 	if (x == 0 && y == 1) {
 		MessageBox(GetHWnd(), (LPCSTR)"通关成功!", (LPCSTR)"逃出迷宫", MB_OK);
 		return true;
-	} else {
-		return false;
 	}
+	return false;
 }

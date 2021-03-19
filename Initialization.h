@@ -17,6 +17,7 @@
 #define  LEFT_KEY  75
 #define  RIGHT_KEY 77
 
+// 界面元素常量值
 enum Stuff {
 	PATH,
 	WALL,
@@ -24,21 +25,29 @@ enum Stuff {
 	FLOWER,
 	PERSON
 };
+
+// 花状态常量值
 enum Status {
 	JEWEL,
 	BOMB
 };
+
+// 方向常量值
 enum Direction {
 	UP,
 	DOWN,
 	LEFT,
 	RIGHT
 };
+
+// 地图属性
 typedef struct list {
 	int property;
 	int isFLower;
 	int isPerson;
 }Map;
+
+// 链表节点
 typedef struct node {
 	int score;
 	int status;
@@ -47,6 +56,8 @@ typedef struct node {
 	int y;
 	struct node* next;
 }Node;
+
+// 从文件读取的坐标
 typedef struct info {
 	int x;
 	int y;
@@ -58,9 +69,9 @@ void initialize(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **nam
 // 界面布局模块
 void initBoundary(Map map[][10], Node* flower, char **name, int& numberOfFlower);
 void initFile(char **name, int numberOfFlower);
-void putImageNB(const char* back, const char* image, int width, int height, int x, int y);
 int enterNumber();
 void enterName(char **name);
+void putImageNB(const char* back, const char* image, int width, int height, int x, int y);
 
 
 // 链表模块
