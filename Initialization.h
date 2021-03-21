@@ -11,6 +11,8 @@
 #include<ctype.h>
 #include<Windows.h>
 #include<io.h>
+#include<mmsyscom.h>
+#pragma comment(lib, "Winmm.lib")
 
 #define  UP_KEY    72
 #define  DOWN_KEY  80

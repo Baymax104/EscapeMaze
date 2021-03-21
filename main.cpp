@@ -13,6 +13,7 @@ int main() {
 	int key;
 	// 初始化界面
 	initialize(map, flower, jewel, bomb, &ptrName);
+	PlaySound((LPCSTR)"resource\\music.wav", NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
 	while (1) {
 		// 存储
 		store(userName, map, flower, jewel, bomb);
