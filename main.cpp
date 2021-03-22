@@ -1,6 +1,7 @@
 #include"Function.h"
-extern IMAGE wall, background, func, info, temp;
+extern IMAGE wall, wallBack, background, func, info, temp;
 extern IMAGE path[12][10];
+extern IMAGE p, pBack, f, fBack, j, jBack, b, bBack;
 int main() {
 	Map map[12][10] = { {0, 0, 0} };
 	Node* flower = initNode();

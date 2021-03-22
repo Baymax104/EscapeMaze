@@ -1,6 +1,7 @@
 #include"Initialization.h"
-IMAGE wall, background,func, info, temp, welcomePage;
+IMAGE wall, wallBack, background,func, info, temp, welcomePage;
 IMAGE path[12][10] = { NULL };// 存储路面
+IMAGE p, pBack, f, fBack, j, jBack, b, bBack;
 void initialize(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name) {
 	int numberOfFlower = 0;
 	initBoundary(map, flower, name, numberOfFlower);
@@ -16,8 +17,19 @@ void initBoundary(Map map[][10], Node* flower, char **name, int& numberOfFlower)
 	}
 	fclose(fp);
 
+	// 加载元素图片
+	loadimage(&p, (LPCTSTR)"resource\\2.png", 64, 64);
+	loadimage(&pBack, (LPCTSTR)"resource\\2_b.png", 64, 64);
+	loadimage(&f, (LPCTSTR)"resource\\3.png", 64, 64);
+	loadimage(&fBack, (LPCTSTR)"resource\\3_b.png", 64, 64);
+	loadimage(&j, (LPCTSTR)"resource\\4.png", 64, 64);
+	loadimage(&jBack, (LPCTSTR)"resource\\4_b.png", 64, 64);
+	loadimage(&b, (LPCTSTR)"resource\\5.png", 64, 64);
+	loadimage(&bBack, (LPCTSTR)"resource\\5_b.png", 64, 64);
+
 	// 进行界面绘图
 	loadimage(&wall, (LPCTSTR)"resource\\1.png", 64, 64);
+	loadimage(&wallBack, (LPCTSTR)"resource\\1_b.png", 64, 64);
 	loadimage(&background, (LPCTSTR)"resource\\0.png", 640, 768);
 	putimage(0, 0, &background);
 	for (int i = 0; i < 12; i++) {
@@ -28,12 +40,14 @@ void initBoundary(Map map[][10], Node* flower, char **name, int& numberOfFlower)
 				getimage(&path[i][j], j * 64, i * 64, 64, 64);
 				break;
 			case WALL:
-				putImageNB("resource\\1_b.png", "resource\\1.png", 64, 64, j * 64, i * 64);
+				putimage(j * 64, i * 64, &wallBack, SRCAND);
+				putimage(j * 64, i * 64, &wall, SRCPAINT);
 				break;
 			case ORIGIN:
 				getimage(&path[i][j], j * 64, i * 64, 64, 64);
 				getimage(&temp, j * 64 - 1, i * 64, 64, 64);
-				putImageNB("resource\\2_b.png", "resource\\2.png", 64, 64, j * 64, i * 64);
+				putimage(j * 64, i * 64, &pBack, SRCAND);
+				putimage(j * 64, i * 64, &p, SRCPAINT);
 				map[i][j].isPerson = PERSON;
 			default:
 				break;
@@ -68,7 +82,8 @@ void initBoundary(Map map[][10], Node* flower, char **name, int& numberOfFlower)
 			if (count == numberOfFlower) {
 				break;
 			}
-			putImageNB("resource\\3_b.png", "resource\\3.png", 64, 64, x * 64, y * 64);
+			putimage(x * 64, y * 64, &fBack, SRCAND);
+			putimage(x * 64, y * 64, &f, SRCPAINT);
 
 			// 改变当前位置属性同时创建节点
 			map[y][x].isFLower = FLOWER;

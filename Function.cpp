@@ -1,6 +1,7 @@
 #include"Function.h"
-extern IMAGE wall, background, func, info, temp;
+extern IMAGE wall, wallBack, background, func, info, temp;
 extern IMAGE path[12][10];
+extern IMAGE p, pBack, f, fBack, j, jBack, b, bBack;
 void move(int& x, int& y,int direction,
 	Map map[][10], Node* flower, Node* jewel, Node* bomb) {
 
@@ -59,7 +60,8 @@ void move(int& x, int& y,int direction,
 				y--;
 			}
 			getimage(&temp, x * 64, up, 64, 64);
-			putImageNB("resource\\2_b.png", "resource\\2.png", 64, 64, x * 64, up);
+			putimage(x * 64, up, &pBack, SRCAND);
+			putimage(x * 64, up, &p, SRCPAINT);
 			FlushBatchDraw();
 			Sleep(10);
 			break;
@@ -99,7 +101,8 @@ void move(int& x, int& y,int direction,
 				y++;
 			}
 			getimage(&temp, x * 64, down, 64, 64);
-			putImageNB("resource\\2_b.png", "resource\\2.png", 64, 64, x * 64, down);
+			putimage(x * 64, down, &pBack, SRCAND);
+			putimage(x * 64, down, &p, SRCPAINT);
 			FlushBatchDraw();
 			Sleep(10);
 			break;
@@ -139,7 +142,8 @@ void move(int& x, int& y,int direction,
 				x--;
 			}
 			getimage(&temp, left, y * 64, 64, 64);
-			putImageNB("resource\\2_b.png", "resource\\2.png", 64, 64, left, y * 64);
+			putimage(left, y * 64, &pBack, SRCAND);
+			putimage(left, y * 64, &p, SRCPAINT);
 			FlushBatchDraw();
 			Sleep(10);
 			break;
@@ -180,7 +184,8 @@ void move(int& x, int& y,int direction,
 				x++;
 			}
 			getimage(&temp, right, y * 64, 64, 64);
-			putImageNB("resource\\2_b.png", "resource\\2.png", 64, 64, right, y * 64);
+			putimage(right, y * 64, &pBack, SRCAND);
+			putimage(right, y * 64, &p, SRCPAINT);
 			FlushBatchDraw();
 			Sleep(10);
 			break;
@@ -227,6 +232,7 @@ void spaceHit(int x, int y, Map map[][10], Node *flower) {
 void mouseControl(Node* flower, Node* jewel, Node* bomb, Map map[][10], char **name, int *x, int *y) {
 	MOUSEMSG m;
 	m = GetMouseMsg();
+
 	// 通过mouseBounce连接函数
 	mouseBounce(35, 95, m, "resource\\func1_c.png", "resource\\func1_b.png", "resource\\func1_cc.png",
 				map, flower, jewel, bomb, name, display);
@@ -277,7 +283,8 @@ void display(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name) 
 			map[fCurrent->y][fCurrent->x].isFLower == FLOWER && 
 			map[fCurrent->y][fCurrent->x].isPerson != PERSON) {
 			putimage(fCurrent->x * 64, fCurrent->y * 64, &path[fCurrent->y][fCurrent->x]);
-			putImageNB("resource\\4_b.png", "resource\\4.png", 64, 64, fCurrent->x * 64, fCurrent->y * 64);
+			putimage(fCurrent->x * 64, fCurrent->y * 64, &jBack, SRCAND);
+			putimage(fCurrent->x * 64, fCurrent->y * 64, &j, SRCPAINT);
 			fCurrent->isExpose = true;
 		}
 		else if (fCurrent->status == JEWEL && fCurrent->isExpose == false &&
@@ -291,7 +298,8 @@ void display(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name) 
 				map[fCurrent->y][fCurrent->x].isFLower == FLOWER && 
 				map[fCurrent->y][fCurrent->x].isPerson != PERSON) {
 			putimage(fCurrent->x * 64, fCurrent->y * 64, &path[fCurrent->y][fCurrent->x]);
-			putImageNB("resource\\5_b.png", "resource\\5.png", 64, 64, fCurrent->x * 64, fCurrent->y * 64);
+			putimage(fCurrent->x * 64, fCurrent->y * 64, &bBack, SRCAND);
+			putimage(fCurrent->x * 64, fCurrent->y * 64, &b, SRCPAINT);
 			fCurrent->isExpose = true;
 		}
 		else if (fCurrent->status == BOMB && fCurrent->isExpose == false &&
@@ -304,7 +312,8 @@ void display(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name) 
 		else if (fCurrent->isExpose == true && map[fCurrent->y][fCurrent->x].isFLower == FLOWER && 
 				map[fCurrent->y][fCurrent->x].isPerson != PERSON) {
 			putimage(fCurrent->x * 64, fCurrent->y * 64, &path[fCurrent->y][fCurrent->x]);
-			putImageNB("resource\\3_b.png", "resource\\3.png", 64, 64, fCurrent->x * 64, fCurrent->y * 64);
+			putimage(fCurrent->x * 64, fCurrent->y * 64, &fBack, SRCAND);
+			putimage(fCurrent->x * 64, fCurrent->y * 64, &f, SRCPAINT);
 			fCurrent->isExpose = false;
 		}
 		else if (fCurrent->isExpose == true && map[fCurrent->y][fCurrent->x].isFLower == FLOWER &&
@@ -335,13 +344,15 @@ void increase(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name)
 					switch (s->status) {
 					case JEWEL:
 						getimage(&path[y][x], x * 64, y * 64, 64, 64);
-						putImageNB("resource\\4_b.png", "resource\\4.png", 64, 64, x * 64, y * 64);
+						putimage(x * 64, y * 64, &jBack, SRCAND);
+						putimage(x * 64, y * 64, &j, SRCPAINT);
 						s->isExpose = true;
 						map[y][x].isFLower = FLOWER;
 						break;
 					case BOMB:
 						getimage(&path[y][x], x * 64, y * 64, 64, 64);
-						putImageNB("resource\\5_b.png", "resource\\5.png", 64, 64, x * 64, y * 64);
+						putimage(x * 64, y * 64, &bBack, SRCAND);
+						putimage(x * 64, y * 64, &b, SRCPAINT);
 						s->isExpose = true;
 						map[y][x].isFLower = FLOWER;
 						break;
@@ -351,13 +362,15 @@ void increase(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name)
 				}
 				else {
 					getimage(&path[y][x], x * 64, y * 64, 64, 64);
-					putImageNB("resource\\3_b.png", "resource\\3.png", 64, 64, x * 64, y * 64);
+					putimage(x * 64, y * 64, &fBack, SRCAND);
+					putimage(x * 64, y * 64, &f, SRCPAINT);
 					map[y][x].isFLower = FLOWER;
 				}
 			}
 			else {
 				getimage(&path[y][x], x * 64, y * 64, 64, 64);
-				putImageNB("resource\\3_b.png", "resource\\3.png", 64, 64, x * 64, y * 64);
+				putimage(x * 64, y * 64, &fBack, SRCAND);
+				putimage(x * 64, y * 64, &f, SRCPAINT);
 				map[y][x].isFLower = FLOWER;
 			}
 			break;
@@ -393,7 +406,8 @@ void empty(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name) {
 
 					// 若花上有人，则重新贴人
 					if (map[i][j].isPerson == PERSON) {
-						putImageNB("resource\\2_b.png", "resource\\2.png", 64, 64, j * 64, i * 64);
+						putimage(j * 64, i * 64, &pBack, SRCAND);
+						putimage(j * 64, i * 64, &p, SRCPAINT);
 					}
 				}
 			}

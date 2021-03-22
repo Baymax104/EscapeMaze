@@ -1,6 +1,7 @@
 #include"Memory.h"
-extern IMAGE wall, background, func, info, temp;
+extern IMAGE wall, wallBack, background, func, info, temp;
 extern IMAGE path[12][10];
+extern IMAGE p, pBack, f, fBack, j, jBack, b, bBack;
 void store(char *name, Map map[][10], Node* flower, Node* jewel, Node* bomb) {
 	char fileName[50];
 	sprintf(fileName, "AppData\\%s.txt", name);
@@ -139,8 +140,8 @@ void importData(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **nam
 			// »æÍ¼
 			for (int i = 1; position[i].x != 0 && position[i].y != 0; i++) {
 				map[position[i].y][position[i].x].isFLower = FLOWER;
-				putImageNB("resource\\3_b.png", "resource\\3.png", 64, 64, 
-							position[i].x * 64, position[i].y * 64);
+				putimage(position[i].x * 64, position[i].y * 64, &fBack, SRCAND);
+				putimage(position[i].x * 64, position[i].y * 64, &f, SRCPAINT);
 			}
 			// ´´½¨Á´±í
 			for (int i = 0; i < numberOfJewel; i++) {
@@ -162,8 +163,8 @@ void importData(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **nam
 			} else {
 				*x = position[0].x;
 				*y = position[0].y;
-				putImageNB("resource\\2_b.png", "resource\\2.png", 64, 64,
-							position[0].x * 64, position[0].y * 64);
+				putimage(position[0].x * 64, position[0].y * 64, &pBack, SRCAND);
+				putimage(position[0].x * 64, position[0].y * 64, &p, SRCPAINT);
 			}
 			showInfo(*name);
 		} else {
