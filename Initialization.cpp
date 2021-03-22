@@ -193,3 +193,6 @@ void createAcquire(Node* head, int score) {
 		head->next = s;
 	}
 }
+void start() {
+
+}

@@ -61,7 +61,7 @@ void move(int& x, int& y,int direction,
 			getimage(&temp, x * 64, up, 64, 64);
 			putImageNB("resource\\2_b.png", "resource\\2.png", 64, 64, x * 64, up);
 			FlushBatchDraw();
-			Sleep(15);
+			Sleep(10);
 			break;
 		}
 		case DOWN: {
@@ -101,7 +101,7 @@ void move(int& x, int& y,int direction,
 			getimage(&temp, x * 64, down, 64, 64);
 			putImageNB("resource\\2_b.png", "resource\\2.png", 64, 64, x * 64, down);
 			FlushBatchDraw();
-			Sleep(15);
+			Sleep(10);
 			break;
 		}
 		case LEFT: {
@@ -141,7 +141,7 @@ void move(int& x, int& y,int direction,
 			getimage(&temp, left, y * 64, 64, 64);
 			putImageNB("resource\\2_b.png", "resource\\2.png", 64, 64, left, y * 64);
 			FlushBatchDraw();
-			Sleep(15);
+			Sleep(10);
 			break;
 		}
 		case RIGHT: {
@@ -182,7 +182,7 @@ void move(int& x, int& y,int direction,
 			getimage(&temp, right, y * 64, 64, 64);
 			putImageNB("resource\\2_b.png", "resource\\2.png", 64, 64, right, y * 64);
 			FlushBatchDraw();
-			Sleep(15);
+			Sleep(10);
 			break;
 		}
 		default:

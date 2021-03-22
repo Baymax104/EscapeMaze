@@ -78,12 +78,12 @@ void showInfo(char* name) {
 	char fileName[50];
 	sprintf(fileName, "AppData\\%s.txt", name);
 	char userName[20];
-	char score[10];
+	char score[20];
 	char timeNow[20];
 	// 获取需要显示的信息
 	FILE* fp = fopen(fileName, "r");
 	fgets(userName, 20, fp);
-	fgets(score, 10, fp);
+	fgets(score, 20, fp);
 	fgets(timeNow, 20, fp);
 	fclose(fp);
 

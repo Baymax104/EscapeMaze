@@ -71,6 +71,7 @@ void initialize(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **nam
 // 界面布局模块
 void initBoundary(Map map[][10], Node* flower, char **name, int& numberOfFlower);
 void initFile(char **name, int numberOfFlower);
+void start();
 int enterNumber();
 void enterName(char **name);
 void putImageNB(const char* back, const char* image, int width, int height, int x, int y);
