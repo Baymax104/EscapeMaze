@@ -1,6 +1,6 @@
 #include"Initialization.h"
-IMAGE wall, background,func, info, temp;
-IMAGE path[12][10] = { NULL };// 存储花位置的地面
+IMAGE wall, background,func, info, temp, welcomePage;
+IMAGE path[12][10] = { NULL };// 存储路面
 void initialize(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name) {
 	int numberOfFlower = 0;
 	initBoundary(map, flower, name, numberOfFlower);
@@ -17,7 +17,6 @@ void initBoundary(Map map[][10], Node* flower, char **name, int& numberOfFlower)
 	fclose(fp);
 
 	// 进行界面绘图
-	initgraph(960, 768);
 	loadimage(&wall, (LPCTSTR)"resource\\1.png", 64, 64);
 	loadimage(&background, (LPCTSTR)"resource\\0.png", 640, 768);
 	putimage(0, 0, &background);
@@ -193,6 +192,28 @@ void createAcquire(Node* head, int score) {
 		head->next = s;
 	}
 }
-void start() {
-
+bool start() {
+	initgraph(960, 768);
+	loadimage(&welcomePage, (LPCTSTR)"resource\\welcome.png", 960, 768);
+	putimage(0, 0, &welcomePage);
+	putImageNB("resource\\title_b.png", "resource\\title.png", 320, 288, 640, 0);
+	putImageNB("resource\\startOption_b.png", "resource\\startOption.png", 320, 480, 640, 288);
+	putImageNB("resource\\func4_b.png", "resource\\start.png", 250, 60, 675, 408);
+	putImageNB("resource\\func4_b.png", "resource\\func4_c.png", 250, 60, 675, 588);
+	MOUSEMSG m;
+	while (1) {
+		m = GetMouseMsg();
+		if ((m.x >= 675 && m.x <= 925) && (m.y >= 408 && m.y <= 468) && m.uMsg == WM_LBUTTONDOWN) {
+			putImageNB("resource\\func4_b.png", "resource\\start_c.png", 250, 60, 675, 408);
+		}
+		else if ((m.x >= 675 && m.x <= 925) && (m.y >= 408 && m.y <= 468) && m.uMsg == WM_LBUTTONUP) {
+			return true;
+		}
+		if ((m.x >= 675 && m.x <= 925) && (m.y >= 588 && m.y <= 648) && m.uMsg == WM_LBUTTONDOWN) {
+			putImageNB("resource\\func4_b.png", "resource\\func4_cc.png", 250, 60, 675, 588);
+		}
+		else if ((m.x >= 675 && m.x <= 925) && (m.y >= 588 && m.y <= 648) && m.uMsg == WM_LBUTTONUP) {
+			return false;
+		}
+	}
 }

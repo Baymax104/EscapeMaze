@@ -10,7 +10,7 @@ void move(int& x, int& y,int direction,
 	bool stop = false;
 	int crossing = 0;
 	int isFlower = 0;
-	// 吃掉花、刷新人的坐标
+	// 消除花、刷新人的坐标
 	if (map[y][x].isPerson == PERSON) {
 		map[y][x].isPerson = 0;
 		if (map[y][x].isFLower == FLOWER) {
