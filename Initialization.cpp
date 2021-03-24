@@ -8,11 +8,15 @@ void initialize(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **nam
 	initFile(name, numberOfFlower);
 }
 void initBoundary(Map map[][10], Node* flower, char **name, int& numberOfFlower) {
+
 	// 读取地图文件
 	FILE* fp = fopen("resource\\map.txt", "r");
 	for (int i = 0; i < 12; i++) {
 		for (int j = 0; j < 10; j++) {
-			fscanf(fp, "%d", &map[i][j].property);
+			if (!fscanf(fp, "%d", &map[i][j].property)) {
+				MessageBox(GetHWnd(), (LPCSTR)"读取地图错误!", (LPCSTR)"逃出迷宫", MB_OK | MB_ICONERROR);
+				exit(EXIT_FAILURE);
+			}
 		}
 	}
 	fclose(fp);
@@ -85,7 +89,7 @@ void initBoundary(Map map[][10], Node* flower, char **name, int& numberOfFlower)
 			putimage(x * 64, y * 64, &fBack, SRCAND);
 			putimage(x * 64, y * 64, &f, SRCPAINT);
 
-			// 改变当前位置属性同时创建节点
+			// 改变当前位置属性、创建节点
 			map[y][x].isFLower = FLOWER;
 			create(flower, x, y);
 			count++;
@@ -98,6 +102,7 @@ void initFile(char **name, int numberOfFlower) {
 	time(&now);
 	struct tm* tmNow;
 	tmNow = localtime(&now);
+
 	// 若输入空用户名, 则初始化为Default
 	if (strcmp((*name), "") == 0) {
 		memset(*name, '\0', sizeof(*name));
@@ -105,7 +110,7 @@ void initFile(char **name, int numberOfFlower) {
 	}
 	sprintf(fileName, "AppData\\%s.txt", *name);
 
-	// 初始化写入文件
+	// 写入初始化文件
 	FILE* fp = fopen(fileName, "w");
 	fprintf(fp, "Username:%s\nScore:0\nTime:%d-%d-%d\n", *name, tmNow->tm_year + 1900, 
 			tmNow->tm_mon + 1, tmNow->tm_mday);
@@ -165,24 +170,30 @@ void create(Node *head, int X, int Y) {
 void attach(Node* flower, Node* jewel, Node* bomb, int x, int y) {
 	Node* preSwap = flower;
 	Node* swap;
-	if (preSwap) {
-		while (preSwap->next) {
-			if (preSwap->next->x == x && preSwap->next->y == y) {
-				break;
-			}
-			preSwap = preSwap->next;
+	while (preSwap->next) {
+		if (preSwap->next->x == x && preSwap->next->y == y) {
+			break;
 		}
-		if (preSwap->next->status == JEWEL) {
-			swap = preSwap->next;
-			preSwap->next = swap->next;
-			swap->next = jewel->next;
-			jewel->next = swap;
-		} else if (preSwap->next->status == BOMB) {
-			swap = preSwap->next;
-			preSwap->next = swap->next;
-			swap->next = bomb->next;
-			bomb->next = swap;
+		preSwap = preSwap->next;
+	}
+	if (!preSwap->next) {
+		MessageBox(GetHWnd(), (LPCSTR)"运行错误", (LPCSTR)"逃出迷宫", MB_OK | MB_ICONERROR);
+		exit(EXIT_FAILURE);
+	}
+	if (preSwap->next->status == JEWEL) {
+		swap = preSwap->next;
+		preSwap->next = swap->next;
+		swap->next = jewel->next;
+		jewel->next = swap;
+	} else if (preSwap->next->status == BOMB) {
+		swap = preSwap->next;
+		if (!swap) {
+			MessageBox(GetHWnd(), (LPCSTR)"程序出现错误", (LPCSTR)"逃出迷宫", MB_OK | MB_ICONERROR);
+			exit(EXIT_FAILURE);
 		}
+		preSwap->next = swap->next;
+		swap->next = bomb->next;
+		bomb->next = swap;
 	}
 }
 void clear(Node* head) {

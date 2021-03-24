@@ -81,6 +81,7 @@ void showInfo(char* name) {
 	char userName[20];
 	char score[20];
 	char timeNow[20];
+
 	// 获取需要显示的信息
 	FILE* fp = fopen(fileName, "r");
 	fgets(userName, 20, fp);
@@ -88,9 +89,11 @@ void showInfo(char* name) {
 	fgets(timeNow, 20, fp);
 	fclose(fp);
 
+	// 设置文字样式
 	setbkmode(TRANSPARENT);
 	settextcolor(BLACK);
 	settextstyle(40, 15, (LPCTSTR)"Consolas");
+
 	// 文字输出
 	BeginBatchDraw();
 	putimage(640, 480, &info);
@@ -117,11 +120,13 @@ void importData(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **nam
 	if (confirm) {
 		store(*name, map, flower, jewel, bomb);
 		sprintf(fileName, "AppData\\%s.txt", importName);
-		if (access(fileName, 0) == 0) {
+		if (_access(fileName, 0) == 0) {
+
 			// 读取文件
 			scanFile(fileName, jewelScore, bombScore, ptrPos, 
 					jewel, bomb, &numberOfJewel, &numberOfBomb);
-			// 界面初始化
+
+			// 初始化
 			for (int i = 0; i < 12; i++) {
 				for (int j = 0; j < 10; j++) {
 					if (map[i][j].isFLower == FLOWER) {
@@ -137,12 +142,14 @@ void importData(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **nam
 			clear(flower);
 			clear(jewel);
 			clear(bomb);
+
 			// 绘图
 			for (int i = 1; position[i].x != 0 && position[i].y != 0; i++) {
 				map[position[i].y][position[i].x].isFLower = FLOWER;
 				putimage(position[i].x * 64, position[i].y * 64, &fBack, SRCAND);
 				putimage(position[i].x * 64, position[i].y * 64, &f, SRCPAINT);
 			}
+
 			// 创建链表
 			for (int i = 0; i < numberOfJewel; i++) {
 				createAcquire(jewel, jewelScore[i]);
@@ -153,6 +160,8 @@ void importData(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **nam
 			for (int i = 1; position[i].x != 0 && position[i].y != 0; i++) {
 				create(flower, position[i].x, position[i].y);
 			}
+
+			// 修改当前信息
 			map[position[0].y][position[0].x].isPerson = PERSON;
 			memset(*name, '\0', sizeof(*name));
 			strcpy(*name, importName);
@@ -179,36 +188,72 @@ void scanFile(char *fileName, int jewelScore[], int bombScore[], MemoryInfo posi
 	FILE* fp = fopen(fileName, "r");
 	char buffer[50] = { '\0' };
 	int line = 0;
-	// 创建文本二维数组
+
+	// 创建文本数组
 	while (fgets(buffer, 50, fp) != NULL) {
 		line++;
 	}
+	if (line < 14) {
+		MessageBox(GetHWnd(), (LPCSTR)"读取错误!", (LPCSTR)"逃出迷宫", MB_OK | MB_ICONERROR);
+		exit(EXIT_FAILURE);
+	}
 	char** text = (char**)malloc(sizeof(char*) * line);
+	if (!text) {
+		MessageBox(GetHWnd(), (LPCSTR)"内存错误!", (LPCSTR)"逃出迷宫", MB_OK | MB_ICONERROR);
+		exit(EXIT_FAILURE);
+	}
 	for (int i = 0; i < line; i++) {
 		text[i] = (char*)malloc(sizeof(char) * 50);
+		if (!text[i]) {
+			MessageBox(GetHWnd(), (LPCSTR)"内存错误!", (LPCSTR)"逃出迷宫", MB_OK | MB_ICONERROR);
+			exit(EXIT_FAILURE);
+		}
 	}
+
 	// 读取文本
 	rewind(fp);
 	for (int i = 0; i < line; i++) {
 		fgets(text[i], 50, fp);
 	}
 	fclose(fp);
+
 	// 读取文本数据
-	sscanf(text[5], "x = %d y = %d", &position[0].x, &position[0].y);
-	sscanf(text[7], "Acquired Jewel:%d", numberOfJewel);
-	sscanf(text[9], "Acquired Bomb:%d", numberOfBomb);
+	if (!sscanf(text[5], "x = %d y = %d", &position[0].x, &position[0].y)) {
+		MessageBox(GetHWnd(), (LPCSTR)"读取错误!", (LPCSTR)"逃出迷宫", MB_OK | MB_ICONERROR);
+		exit(EXIT_FAILURE);
+	}
+	if (!sscanf(text[7], "Acquired Jewel:%d", numberOfJewel)) {
+		MessageBox(GetHWnd(), (LPCSTR)"读取错误!", (LPCSTR)"逃出迷宫", MB_OK | MB_ICONERROR);
+		exit(EXIT_FAILURE);
+	}
+	if (!sscanf(text[9], "Acquired Bomb:%d", numberOfBomb)) {
+		MessageBox(GetHWnd(), (LPCSTR)"读取错误!", (LPCSTR)"逃出迷宫", MB_OK | MB_ICONERROR);
+		exit(EXIT_FAILURE);
+	}
 	for (int i = 0; i < *numberOfJewel; i++) {
-		sscanf(text[8], "%d", &jewelScore[i]);
+		if (!sscanf(text[8], "%d", &jewelScore[i])) {
+			MessageBox(GetHWnd(), (LPCSTR)"读取错误!", (LPCSTR)"逃出迷宫", MB_OK | MB_ICONERROR);
+			exit(EXIT_FAILURE);
+		}
 	}
 	for (int i = 0; i < *numberOfBomb; i++) {
-		sscanf(text[10], "%d", &bombScore[i]);
+		if (!sscanf(text[10], "%d", &bombScore[i])) {
+			MessageBox(GetHWnd(), (LPCSTR)"读取错误!", (LPCSTR)"逃出迷宫", MB_OK | MB_ICONERROR);
+			exit(EXIT_FAILURE);
+		}
 	}
 	for (int i = 14, k = 1; i < line; i++, k++) {
-		sscanf(text[i], "x = %d y = %d", &position[k].x, &position[k].y);
+		if (!sscanf(text[i], "x = %d y = %d", &position[k].x, &position[k].y)) {
+			MessageBox(GetHWnd(), (LPCSTR)"读取错误!", (LPCSTR)"逃出迷宫", MB_OK | MB_ICONERROR);
+			exit(EXIT_FAILURE);
+		}
 	}
+
 	// 释放空间
 	for (int i = 0; i < line; i++) {
-		free(text[i]);
+		if (text[i]) {
+			free(text[i]);
+		}
 	}
 	free(text);
 }

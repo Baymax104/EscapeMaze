@@ -11,6 +11,7 @@ void move(int& x, int& y,int direction,
 	bool stop = false;
 	int crossing = 0;
 	int isFlower = 0;
+
 	// 消除花、刷新人的坐标
 	if (map[y][x].isPerson == PERSON) {
 		map[y][x].isPerson = 0;
@@ -63,7 +64,7 @@ void move(int& x, int& y,int direction,
 			putimage(x * 64, up, &pBack, SRCAND);
 			putimage(x * 64, up, &p, SRCPAINT);
 			FlushBatchDraw();
-			Sleep(10);
+			Sleep(12);
 			break;
 		}
 		case DOWN: {
@@ -104,7 +105,7 @@ void move(int& x, int& y,int direction,
 			putimage(x * 64, down, &pBack, SRCAND);
 			putimage(x * 64, down, &p, SRCPAINT);
 			FlushBatchDraw();
-			Sleep(10);
+			Sleep(12);
 			break;
 		}
 		case LEFT: {
@@ -145,7 +146,7 @@ void move(int& x, int& y,int direction,
 			putimage(left, y * 64, &pBack, SRCAND);
 			putimage(left, y * 64, &p, SRCPAINT);
 			FlushBatchDraw();
-			Sleep(10);
+			Sleep(12);
 			break;
 		}
 		case RIGHT: {
@@ -187,7 +188,7 @@ void move(int& x, int& y,int direction,
 			putimage(right, y * 64, &pBack, SRCAND);
 			putimage(right, y * 64, &p, SRCPAINT);
 			FlushBatchDraw();
-			Sleep(10);
+			Sleep(12);
 			break;
 		}
 		default:
@@ -196,6 +197,8 @@ void move(int& x, int& y,int direction,
 		}
 		EndBatchDraw();
 		if (stop == true) {
+
+			// 停下时刷新人的坐标
 			map[y][x].isPerson = PERSON;
 			break;
 		}
@@ -203,6 +206,7 @@ void move(int& x, int& y,int direction,
 }
 void spaceHit(int x, int y, Map map[][10], Node *flower) {
 	Node* current = flower;
+
 	// 通过坐标定位
 	while (current->next) {
 		current = current->next;
@@ -326,13 +330,14 @@ void display(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name) 
 	}
 }
 void increase(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name) {
+
 	// 获取随机数坐标
 	srand((unsigned)time(NULL));
 	int x = rand() % 10;
 	int y = rand() % 12;
 	int count = 0;
 
-	// 通过循环不断取到符合条件的坐标
+	// 通过循环不断取坐标直到符合条件
 	while (1) {
 		if (map[y][x].property == PATH && map[y][x].isFLower != FLOWER && map[y][x].isPerson != PERSON) {
 			create(flower, x, y);
@@ -388,7 +393,7 @@ void increase(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name)
 			count = 0;
 		}
 
-		// 继续取随机数
+		// 继续取随机数坐标
 		x = rand() % 10;
 		y = rand() % 12;
 	}
@@ -421,6 +426,7 @@ void empty(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name) {
 void quit(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name) {
 	int selection = MessageBox(GetHWnd(), (LPCSTR)"确定要退出游戏吗?", (LPCSTR)"逃出迷宫", MB_OKCANCEL |									MB_ICONQUESTION);
 	if (selection == IDOK) {
+
 		// 存储后退出整个程序
 		store(*name, map, flower, jewel, bomb);
 		exit(EXIT_SUCCESS);

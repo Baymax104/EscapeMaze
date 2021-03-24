@@ -14,19 +14,26 @@ int main() {
 	int key;
 	if (start()) {
 		cleardevice();
+
 		// 初始化界面
 		initialize(map, flower, jewel, bomb, &ptrName);
+
 		// 播放音乐
 		PlaySound((LPCSTR)"resource\\music.wav", NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
+
 		while (1) {
+
 			// 存储
 			store(userName, map, flower, jewel, bomb);
+
 			// 显示信息
 			showInfo(userName);
+
 			// 鼠标功能
 			if (MouseHit()) {
 				mouseControl(flower, jewel, bomb, map, &ptrName, &xCurrent, &yCurrent);
 			}
+
 			// 移动功能
 			key = -1;
 			if (_kbhit()) {
@@ -50,10 +57,13 @@ int main() {
 						break;
 					}
 				}
+
+				// 空格机制
 				if (pre == ' ') {
 					spaceHit(xCurrent, yCurrent, map, flower);
 				}
 			}
+
 			// 游戏结束
 			if (isGameOver(xCurrent, yCurrent)) {
 				store(userName, map, flower, jewel, bomb);
