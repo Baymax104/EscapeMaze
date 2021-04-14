@@ -9,33 +9,32 @@ int main() {
 	Node* bomb = initNode();
 	char userName[20] = {"\0"};
 	char* ptrName = userName;
+	char** mapFile;
 	int xCurrent = 9;
 	int yCurrent = 2;
-	int key;
+	int key = -1;
+	int level = 0;
+	initMapFile(&mapFile);
 	if (start()) {
 		cleardevice();
 
 		// 初始化界面
-		initialize(map, flower, jewel, bomb, &ptrName);
+		initialize(map, flower, jewel, bomb, &ptrName, mapFile[level]);
+
+		// 显示信息
+		showInfo(userName);
 
 		// 播放音乐
 		PlaySound((LPCSTR)"resource\\music.wav", NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
 
 		while (1) {
 
-			// 存储
-			store(userName, map, flower, jewel, bomb);
-
-			// 显示信息
-			showInfo(userName);
-
 			// 鼠标功能
 			if (MouseHit()) {
-				mouseControl(flower, jewel, bomb, map, &ptrName, &xCurrent, &yCurrent);
+				mouseControl(flower, jewel, bomb, map, &ptrName, &xCurrent, &yCurrent, level + 1);
 			}
 
 			// 移动功能
-			key = -1;
 			if (_kbhit()) {
 				int pre = _getch();
 				if (pre == 0xE0) {
@@ -62,21 +61,36 @@ int main() {
 				if (pre == ' ') {
 					spaceHit(xCurrent, yCurrent, map, flower);
 				}
+
+				// 存储
+				store(userName, map, flower, jewel, bomb, level + 1);
+
+				// 显示信息
+				showInfo(userName);
 			}
 
 			// 游戏结束
 			if (isGameOver(xCurrent, yCurrent)) {
-				store(userName, map, flower, jewel, bomb);
-				if (MessageBox(GetHWnd(), (LPCSTR)"再来一局?", (LPCSTR)"逃出迷宫", MB_OKCANCEL) == IDOK) {
-					clear(flower);
-					clear(jewel);
-					clear(bomb);
-					initialize(map, flower, jewel, bomb, &ptrName);
-					map[1][0].isPerson = 0;
+				level++;
+				store(userName, map, flower, jewel, bomb, level + 1);
+				if (level != LEVEL) {
+					resetBoundary(map, mapFile[level], flower);
 					xCurrent = 9;
 					yCurrent = 2;
+					showInfo(userName);
 				} else {
-					exit(EXIT_SUCCESS);
+					if (MessageBox(GetHWnd(), (LPCSTR)"再来一局?", (LPCSTR)"逃出迷宫", MB_OKCANCEL) == IDOK) {
+						clear(flower);
+						clear(jewel);
+						clear(bomb);
+						level = 0;
+						initialize(map, flower, jewel, bomb, &ptrName, mapFile[level]);
+						map[1][0].isPerson = 0;
+						xCurrent = 9;
+						yCurrent = 2;
+					} else {
+						exit(EXIT_SUCCESS);
+					}
 				}
 			}
 		}

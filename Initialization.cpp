@@ -2,15 +2,28 @@
 IMAGE wall, wallBack, background,func, info, temp, welcomePage;
 IMAGE path[12][10] = { NULL };// 存储路面
 IMAGE p, pBack, f, fBack, j, jBack, b, bBack;
-void initialize(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name) {
+void initialize(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name, char* mapFile) {
 	int numberOfFlower = 0;
-	initBoundary(map, flower, name, numberOfFlower);
-	initFile(name, numberOfFlower);
+	initBoundary(map, flower, name, numberOfFlower, mapFile);
+	initFile(name, numberOfFlower, flower);
 }
-void initBoundary(Map map[][10], Node* flower, char **name, int& numberOfFlower) {
+void initMapFile(char*** mapFile) {
+	if (!(*mapFile = (char**)malloc(sizeof(char*) * LEVEL))) {
+		MessageBox(GetHWnd(), (LPCSTR)"地图内存错误!", (LPCSTR)"逃出迷宫", MB_OK | MB_ICONERROR);
+		exit(EXIT_FAILURE);
+	}
+	for (int i = 0; i < LEVEL; i++) {
+		if (!((*mapFile)[i] = (char*)malloc(sizeof(char) * 50))) {
+			MessageBox(GetHWnd(), (LPCSTR)"地图内存错误!", (LPCSTR)"逃出迷宫", MB_OK | MB_ICONERROR);
+			exit(EXIT_FAILURE);
+		}
+		sprintf((*mapFile)[i], "resource\\map%d.txt", i);
+	}
+}
+void initBoundary(Map map[][10], Node* flower, char **name, int& numberOfFlower, char* mapFile) {
 
 	// 读取地图文件
-	FILE* fp = fopen("resource\\map.txt", "r");
+	FILE* fp = fopen(mapFile, "r");
 	for (int i = 0; i < 12; i++) {
 		for (int j = 0; j < 10; j++) {
 			if (!fscanf(fp, "%d", &map[i][j].property)) {
@@ -30,11 +43,11 @@ void initBoundary(Map map[][10], Node* flower, char **name, int& numberOfFlower)
 	loadimage(&jBack, (LPCTSTR)"resource\\4_b.png", 64, 64);
 	loadimage(&b, (LPCTSTR)"resource\\5.png", 64, 64);
 	loadimage(&bBack, (LPCTSTR)"resource\\5_b.png", 64, 64);
-
-	// 进行界面绘图
 	loadimage(&wall, (LPCTSTR)"resource\\1.png", 64, 64);
 	loadimage(&wallBack, (LPCTSTR)"resource\\1_b.png", 64, 64);
 	loadimage(&background, (LPCTSTR)"resource\\0.png", 640, 768);
+
+	// 进行界面绘图
 	putimage(0, 0, &background);
 	for (int i = 0; i < 12; i++) {
 		for (int j = 0; j < 10; j++) {
@@ -96,7 +109,7 @@ void initBoundary(Map map[][10], Node* flower, char **name, int& numberOfFlower)
 		}
 	}
 }
-void initFile(char **name, int numberOfFlower) {
+void initFile(char **name, int numberOfFlower, Node *flower) {
 	char fileName[50];
 	time_t now;
 	time(&now);
@@ -110,10 +123,10 @@ void initFile(char **name, int numberOfFlower) {
 	}
 	sprintf(fileName, "AppData\\%s.txt", *name);
 
-	// 写入初始化文件
+	// 初始化文件写入
 	FILE* fp = fopen(fileName, "w");
-	fprintf(fp, "Username:%s\nScore:0\nTime:%d-%d-%d\n", *name, tmNow->tm_year + 1900, 
-			tmNow->tm_mon + 1, tmNow->tm_mday);
+	fprintf(fp, "Username:%s\nLevel:1\nScore:0\n", *name);
+	fprintf(fp, "Time:%d-%d-%d\n", tmNow->tm_year + 1900, tmNow->tm_mon + 1, tmNow->tm_mday);
 	fprintf(fp, "--------------------------------------\n");
 	fprintf(fp, "Person:\n");
 	fprintf(fp, "x = 9, y = 2\n");
@@ -124,7 +137,78 @@ void initFile(char **name, int numberOfFlower) {
 	fprintf(fp, "\n");
 	fprintf(fp, "--------------------------------------\n");
 	fprintf(fp, "Flower:\nnumber:%d\n", numberOfFlower);
+	while (flower->next) {
+		flower = flower->next;
+		fprintf(fp, "x = %d y = %d\n", flower->x, flower->y);
+	}
 	fclose(fp);
+}
+void resetBoundary(Map map[][10], char* mapFile, Node *flower) {
+
+	// 重置地图数组
+	FILE* fp = fopen(mapFile, "r");
+	for (int i = 0; i < 12; i++) {
+		for (int j = 0; j < 10; j++) {
+			if (!fscanf(fp, "%d", &map[i][j].property)) {
+				MessageBox(GetHWnd(), (LPCSTR)"读取地图错误!", (LPCSTR)"逃出迷宫", MB_OK | MB_ICONERROR);
+				exit(EXIT_FAILURE);
+			}
+		}
+	}
+	fclose(fp);
+
+	// 重置小花链表
+	clear(flower);
+
+	// 重新绘制地图
+	clearrectangle(0, 0, 640, 768);
+	putimage(0, 0, &background);
+	for (int i = 0; i < 12; i++) {
+		for (int j = 0; j < 10; j++) {
+			switch (map[i][j].property) {
+			case PATH:
+				// 获取所有的路面背景图
+				getimage(&path[i][j], j * 64, i * 64, 64, 64);
+				break;
+			case WALL:
+				putimage(j * 64, i * 64, &wallBack, SRCAND);
+				putimage(j * 64, i * 64, &wall, SRCPAINT);
+				break;
+			case ORIGIN:
+				getimage(&path[i][j], j * 64, i * 64, 64, 64);
+				getimage(&temp, j * 64 - 1, i * 64, 64, 64);
+				putimage(j * 64, i * 64, &pBack, SRCAND);
+				putimage(j * 64, i * 64, &p, SRCPAINT);
+				map[i][j].isPerson = PERSON;
+			default:
+				break;
+			}
+		}
+	}
+
+	// 通过对话框获取花的数量
+	int numberOfFlower = enterNumber();
+
+	// 取随机数进行花的绘图
+	int x, y;
+	srand((unsigned)time(NULL));
+	int count = 0;
+	while (1) {
+		x = rand() % 10;
+		y = rand() % 12;
+		if (map[y][x].property == PATH && map[y][x].isFLower != FLOWER) {
+			if (count == numberOfFlower) {
+				break;
+			}
+			putimage(x * 64, y * 64, &fBack, SRCAND);
+			putimage(x * 64, y * 64, &f, SRCPAINT);
+
+			// 改变当前位置属性、创建节点
+			map[y][x].isFLower = FLOWER;
+			create(flower, x, y);
+			count++;
+		}
+	}
 }
 int enterNumber() {
 	char num[3];

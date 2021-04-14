@@ -233,21 +233,23 @@ void spaceHit(int x, int y, Map map[][10], Node *flower) {
 		current->isExpose = false;
 	}
 }
-void mouseControl(Node* flower, Node* jewel, Node* bomb, Map map[][10], char **name, int *x, int *y) {
+void mouseControl(Node* flower, Node* jewel, Node* bomb, Map map[][10], 
+				char **name, int *x, int *y, int level) {
+
 	MOUSEMSG m;
 	m = GetMouseMsg();
 
 	// 通过mouseBounce连接函数
 	mouseBounce(35, 95, m, "resource\\func1_c.png", "resource\\func1_b.png", "resource\\func1_cc.png",
-				map, flower, jewel, bomb, name, display);
+				map, flower, jewel, bomb, name, level, display);
 	mouseBounce(105, 165, m, "resource\\func2_c.png", "resource\\func2_b.png", "resource\\func2_cc.png",
-				map, flower, jewel, bomb, name, increase);
+				map, flower, jewel, bomb, name, level, increase);
 	mouseBounce(175, 235, m, "resource\\func3_c.png", "resource\\func3_b.png", "resource\\func3_cc.png",
-				map, flower, jewel, bomb, name, empty);
+				map, flower, jewel, bomb, name, level, empty);
 	mouseBounce(245, 305, m, "resource\\func4_c.png", "resource\\func4_b.png", "resource\\func4_cc.png",
-				map, flower, jewel, bomb, name, quit);
+				map, flower, jewel, bomb, name, level, quit);
 	mouseBounce(315, 375, m, "resource\\func5_c.png", "resource\\func5_b.png", "resource\\func5_cc.png",
-				map, flower, jewel, bomb, name, conserveData);
+				map, flower, jewel, bomb, name, level, conserveData);
 
 	// importData参数不同, 需要当前坐标
 	if ((m.x >= 675 && m.x <= 925) && (m.y >= 385 && m.y <= 445) && m.uMsg == WM_LBUTTONDOWN) {
@@ -255,11 +257,11 @@ void mouseControl(Node* flower, Node* jewel, Node* bomb, Map map[][10], char **n
 	}
 	else if ((m.x >= 675 && m.x <= 925) && (m.y >= 385 && m.y <= 445) && m.uMsg == WM_LBUTTONUP) {
 		putImageNB("resource\\func6_b.png", "resource\\func6_c.png", 250, 60, 675, 385);
-		importData(map, flower, jewel, bomb, name, x, y);
+		importData(map, flower, jewel, bomb, name, x, y, level);
 	}
 }
 void mouseBounce(int y1, int y2, MOUSEMSG m, const char* img, const char* imgBack, const char* imgB,
-				Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name, 
+				Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name, int level, 
 				void (*pf)(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name)) {
 
 	if ((m.x >= 675 && m.x <= 925) && (m.y >= y1 && m.y <= y2) && m.uMsg == WM_LBUTTONDOWN) {
@@ -420,15 +422,12 @@ void empty(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name) {
 		clear(flower);
 		clear(jewel);
 		clear(bomb);
-		initFile(name, 0);
+		initFile(name, 0, flower);
 	}
 }
 void quit(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name) {
 	int selection = MessageBox(GetHWnd(), (LPCSTR)"确定要退出游戏吗?", (LPCSTR)"逃出迷宫", MB_OKCANCEL |									MB_ICONQUESTION);
 	if (selection == IDOK) {
-
-		// 存储后退出整个程序
-		store(*name, map, flower, jewel, bomb);
 		exit(EXIT_SUCCESS);
 	}
 }

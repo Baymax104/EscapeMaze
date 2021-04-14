@@ -2,7 +2,7 @@
 extern IMAGE wall, wallBack, background, func, info, temp;
 extern IMAGE path[12][10];
 extern IMAGE p, pBack, f, fBack, j, jBack, b, bBack;
-void store(char *name, Map map[][10], Node* flower, Node* jewel, Node* bomb) {
+void store(char *name, Map map[][10], Node* flower, Node* jewel, Node* bomb, int level) {
 	char fileName[50];
 	sprintf(fileName, "AppData\\%s.txt", name);
 	int score = 0;
@@ -17,6 +17,7 @@ void store(char *name, Map map[][10], Node* flower, Node* jewel, Node* bomb) {
 	time(&now);
 	struct tm* tmNow;
 	tmNow = localtime(&now);
+
 	// 获取jewel得分、总得分和个数
 	for (int i = 0; jewel->next; i++) {
 		jewel = jewel->next;
@@ -53,7 +54,7 @@ void store(char *name, Map map[][10], Node* flower, Node* jewel, Node* bomb) {
 
 	// 打开文件写入
 	FILE* fp = fopen(fileName, "w");
-	fprintf(fp, "Username:%s\nScore:%d\n", name, score);
+	fprintf(fp, "Username:%s\nLevel:%d\nScore:%d\n", name, level, score);
 	fprintf(fp, "Time:%d-%d-%d\n", tmNow->tm_year + 1900, tmNow->tm_mon + 1, tmNow->tm_mday);
 	fprintf(fp, "--------------------------------------\n");
 	fprintf(fp, "Person:\nx = %d y = %d\n", xPerson, yPerson);
@@ -81,10 +82,12 @@ void showInfo(char* name) {
 	char userName[20];
 	char score[20];
 	char timeNow[20];
+	char level[10];
 
 	// 获取需要显示的信息
 	FILE* fp = fopen(fileName, "r");
 	fgets(userName, 20, fp);
+	fgets(level, 10, fp);
 	fgets(score, 20, fp);
 	fgets(timeNow, 20, fp);
 	fclose(fp);
@@ -98,15 +101,16 @@ void showInfo(char* name) {
 	BeginBatchDraw();
 	putimage(640, 480, &info);
 	outtextxy(675, 510, (LPCTSTR)userName);
-	outtextxy(675, 560, (LPCTSTR)score);
-	outtextxy(675, 610, (LPCTSTR)timeNow);
+	outtextxy(675, 560, (LPCTSTR)level);
+	outtextxy(675, 610, (LPCTSTR)score);
+	outtextxy(675, 660, (LPCTSTR)timeNow);
 	EndBatchDraw();
 }
 void conserveData(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name) {
-	store(*name, map, flower, jewel, bomb);
+	// 由于每次移动都进行了存储，实现了自动存储，故不需要额外实现
 	MessageBox(GetHWnd(), (LPCSTR)"存档成功!", (LPCSTR)"逃出迷宫", MB_OK);
 }
-void importData(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name, int *x, int *y) {
+void importData(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name, int *x, int *y, int level) {
 	
 	char fileName[50];
 	char importName[20];
@@ -118,7 +122,7 @@ void importData(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **nam
 	int numberOfBomb = 0;
 	bool confirm = InputBox((LPTSTR)importName, 20, "请输入导入的用户名:", "逃出迷宫", "Default", 0, 0, false);
 	if (confirm) {
-		store(*name, map, flower, jewel, bomb);
+		store(*name, map, flower, jewel, bomb, level);
 		sprintf(fileName, "AppData\\%s.txt", importName);
 		if (_access(fileName, 0) == 0) {
 
@@ -168,7 +172,7 @@ void importData(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **nam
 			if (position[0].x == 0 && position[0].y == 1) {
 				*x = 9;
 				*y = 2;
-				initialize(map, flower, jewel, bomb, name);
+				//initialize(map, flower, jewel, bomb, name);
 			} else {
 				*x = position[0].x;
 				*y = position[0].y;

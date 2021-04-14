@@ -19,7 +19,9 @@
 #define  LEFT_KEY  75
 #define  RIGHT_KEY 77
 
-// 界面元素常量值
+#define LEVEL 3
+
+// 界面元素
 enum Stuff {
 	PATH,
 	WALL,
@@ -28,13 +30,13 @@ enum Stuff {
 	PERSON
 };
 
-// 花状态常量值
+// 花状态
 enum Status {
 	JEWEL,
 	BOMB
 };
 
-// 方向常量值
+// 方向
 enum Direction {
 	UP,
 	DOWN,
@@ -66,12 +68,14 @@ typedef struct info {
 }MemoryInfo;
 
 // 系统初始化
-void initialize(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name);
+void initialize(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name, char *mapFile);
+void initMapFile(char*** mapFile);
 
 // 界面布局模块
 bool start();
-void initBoundary(Map map[][10], Node* flower, char **name, int& numberOfFlower);
-void initFile(char **name, int numberOfFlower);
+void initBoundary(Map map[][10], Node* flower, char **name, int& numberOfFlower, char *mapFile);
+void initFile(char **name, int numberOfFlower, Node *flower);
+void resetBoundary(Map map[][10], char *mapFile, Node *flower);
 int enterNumber();
 void enterName(char **name);
 void putImageNB(const char* back, const char* image, int width, int height, int x, int y);
