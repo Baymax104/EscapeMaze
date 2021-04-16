@@ -3,8 +3,8 @@ extern IMAGE wall, wallBack, background, func, info, temp;
 extern IMAGE path[12][10];
 extern IMAGE p, pBack, f, fBack, j, jBack, b, bBack;
 int main() {
-	Map map[12][10] = { {0, 0, 0} };
-	Node* flower = initNode();
+	Map map[12][10] = { {0, false, false} };
+	Node* flower = initNode(); 
 	Node* jewel = initNode();
 	Node* bomb = initNode();
 	char userName[20] = {"\0"};
@@ -13,6 +13,7 @@ int main() {
 	int xCurrent = 9;
 	int yCurrent = 2;
 	int key = -1;
+	MOUSEMSG m;
 	int level = 0;
 	initMapFile(&mapFile);
 	if (start()) {
@@ -27,11 +28,16 @@ int main() {
 		// 播放音乐
 		PlaySound((LPCSTR)"resource\\music.wav", NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
 
+		FlushMouseMsgBuffer();
 		while (1) {
 
 			// 鼠标功能
 			if (MouseHit()) {
-				mouseControl(flower, jewel, bomb, map, &ptrName, &xCurrent, &yCurrent, level + 1);
+				m = GetMouseMsg();
+				mouseControl(flower, jewel, bomb, map, &ptrName, &xCurrent, &yCurrent, 
+							mapFile, &level, m);
+				FlushMouseMsgBuffer();
+				store(userName, map, flower, jewel, bomb, level + 1);
 			}
 
 			// 移动功能
@@ -55,46 +61,62 @@ int main() {
 					default:
 						break;
 					}
+					key = -1;
+
+					// 存储
+					store(userName, map, flower, jewel, bomb, level + 1);
+
+					// 显示信息
+					showInfo(userName);
 				}
 
 				// 空格机制
 				if (pre == ' ') {
 					spaceHit(xCurrent, yCurrent, map, flower);
 				}
-
-				// 存储
-				store(userName, map, flower, jewel, bomb, level + 1);
-
-				// 显示信息
-				showInfo(userName);
 			}
 
 			// 游戏结束
 			if (isGameOver(xCurrent, yCurrent)) {
 				level++;
-				store(userName, map, flower, jewel, bomb, level + 1);
 				if (level != LEVEL) {
-					resetBoundary(map, mapFile[level], flower);
 					xCurrent = 9;
 					yCurrent = 2;
+					resetBoundary(map, mapFile[level], flower);
+					store(userName, map, flower, jewel, bomb, level + 1);
 					showInfo(userName);
 				} else {
 					if (MessageBox(GetHWnd(), (LPCSTR)"再来一局?", (LPCSTR)"逃出迷宫", MB_OKCANCEL) == IDOK) {
+
+						// 清空链表
 						clear(flower);
 						clear(jewel);
 						clear(bomb);
+
+						// 重置关卡
 						level = 0;
 						initialize(map, flower, jewel, bomb, &ptrName, mapFile[level]);
-						map[1][0].isPerson = 0;
+
+						// 重置人物
+						map[1][0].isPerson = false;
 						xCurrent = 9;
 						yCurrent = 2;
+						showInfo(userName);
 					} else {
+						for (int i = 0; i < LEVEL; i++) {
+							free(mapFile[i]);
+						}
+						free(mapFile);
 						exit(EXIT_SUCCESS);
 					}
 				}
 			}
 		}
 	} else {
+		for (int i = 0; i < LEVEL; i++) {
+			free(mapFile[i]);
+		}
+		free(mapFile);
 		exit(EXIT_SUCCESS);
 	}
 	system("pause");

@@ -13,10 +13,11 @@ void showInfo(char* name);
 void conserveData(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name);
 
 // 导入
-void importData(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name, int *x, int *y, int level);
+void importData(Map map[][10], Node* flower, Node* jewel, Node* bomb, 
+				char **name, int *x, int *y, char **mapFile, int *level);
 
 // 扫描文件
 void scanFile(char *fileName,int jewelScore[], int bombScore[], MemoryInfo position[], 
-			Node* jewel, Node* bomb, int *numberOfJewel, int *numberOfBomb);
+			Node* jewel, Node* bomb, int *numberOfJewel, int *numberOfBomb, int *level);
 
 #endif // !ESCAPEMAZE_MEMORY_H

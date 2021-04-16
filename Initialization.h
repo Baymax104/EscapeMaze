@@ -19,15 +19,13 @@
 #define  LEFT_KEY  75
 #define  RIGHT_KEY 77
 
-#define LEVEL 3
+#define LEVEL 3 // 关卡数
 
 // 界面元素
 enum Stuff {
 	PATH,
 	WALL,
 	ORIGIN,
-	FLOWER,
-	PERSON
 };
 
 // 花状态
@@ -47,8 +45,8 @@ enum Direction {
 // 地图属性
 typedef struct list {
 	int property;
-	int isFLower;
-	int isPerson;
+	bool isFLower;
+	bool isPerson;
 }Map;
 
 // 链表节点
@@ -73,7 +71,7 @@ void initMapFile(char*** mapFile);
 
 // 界面布局模块
 bool start();
-void initBoundary(Map map[][10], Node* flower, char **name, int& numberOfFlower, char *mapFile);
+void initBoundary(Map map[][10], Node* flower, char** name, int& numberOfFlower, char* mapFile);
 void initFile(char **name, int numberOfFlower, Node *flower);
 void resetBoundary(Map map[][10], char *mapFile, Node *flower);
 int enterNumber();

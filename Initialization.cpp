@@ -9,12 +9,12 @@ void initialize(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **nam
 }
 void initMapFile(char*** mapFile) {
 	if (!(*mapFile = (char**)malloc(sizeof(char*) * LEVEL))) {
-		MessageBox(GetHWnd(), (LPCSTR)"地图内存错误!", (LPCSTR)"逃出迷宫", MB_OK | MB_ICONERROR);
+		MessageBox(GetHWnd(), (LPCSTR)"地图内存错误1!", (LPCSTR)"逃出迷宫", MB_OK | MB_ICONERROR);
 		exit(EXIT_FAILURE);
 	}
 	for (int i = 0; i < LEVEL; i++) {
 		if (!((*mapFile)[i] = (char*)malloc(sizeof(char) * 50))) {
-			MessageBox(GetHWnd(), (LPCSTR)"地图内存错误!", (LPCSTR)"逃出迷宫", MB_OK | MB_ICONERROR);
+			MessageBox(GetHWnd(), (LPCSTR)"地图内存错误2!", (LPCSTR)"逃出迷宫", MB_OK | MB_ICONERROR);
 			exit(EXIT_FAILURE);
 		}
 		sprintf((*mapFile)[i], "resource\\map%d.txt", i);
@@ -65,7 +65,7 @@ void initBoundary(Map map[][10], Node* flower, char **name, int& numberOfFlower,
 				getimage(&temp, j * 64 - 1, i * 64, 64, 64);
 				putimage(j * 64, i * 64, &pBack, SRCAND);
 				putimage(j * 64, i * 64, &p, SRCPAINT);
-				map[i][j].isPerson = PERSON;
+				map[i][j].isPerson = true;
 			default:
 				break;
 			}
@@ -88,6 +88,17 @@ void initBoundary(Map map[][10], Node* flower, char **name, int& numberOfFlower,
 	// 通过对话框获取花的数量
 	numberOfFlower = enterNumber();
 
+	// 判断对话框输入
+	while (1) {
+		if (numberOfFlower > 47 || numberOfFlower < 0) {
+			MessageBox(GetHWnd(), (LPCSTR)"输入错误!", (LPCSTR)"逃出迷宫", MB_OK | MB_ICONERROR);
+			numberOfFlower = enterNumber();
+		}
+		else {
+			break;
+		}
+	}
+
 	// 取随机数进行花的绘图
 	int x, y;
 	srand((unsigned)time(NULL));
@@ -95,7 +106,7 @@ void initBoundary(Map map[][10], Node* flower, char **name, int& numberOfFlower,
 	while (1) {
 		x = rand() % 10;
 		y = rand() % 12;
-		if (map[y][x].property == PATH && map[y][x].isFLower != FLOWER) {
+		if (map[y][x].property == PATH && map[y][x].isFLower == false) {
 			if (count == numberOfFlower) {
 				break;
 			}
@@ -103,7 +114,7 @@ void initBoundary(Map map[][10], Node* flower, char **name, int& numberOfFlower,
 			putimage(x * 64, y * 64, &f, SRCPAINT);
 
 			// 改变当前位置属性、创建节点
-			map[y][x].isFLower = FLOWER;
+			map[y][x].isFLower = true;
 			create(flower, x, y);
 			count++;
 		}
@@ -133,7 +144,7 @@ void initFile(char **name, int numberOfFlower, Node *flower) {
 	fprintf(fp, "--------------------------------------\n");
 	fprintf(fp, "Acquired Jewel:0\n");
 	fprintf(fp, "\n");
-	fprintf(fp, "Acquired bomb:0\n");
+	fprintf(fp, "Acquired Bomb:0\n");
 	fprintf(fp, "\n");
 	fprintf(fp, "--------------------------------------\n");
 	fprintf(fp, "Flower:\nnumber:%d\n", numberOfFlower);
@@ -144,6 +155,11 @@ void initFile(char **name, int numberOfFlower, Node *flower) {
 	fclose(fp);
 }
 void resetBoundary(Map map[][10], char* mapFile, Node *flower) {
+
+	// 清空地图属性
+	for (int i = 0; i < 12; i++) {
+		memset(map[i], 0, sizeof(Map) * 10);
+	}
 
 	// 重置地图数组
 	FILE* fp = fopen(mapFile, "r");
@@ -179,7 +195,7 @@ void resetBoundary(Map map[][10], char* mapFile, Node *flower) {
 				getimage(&temp, j * 64 - 1, i * 64, 64, 64);
 				putimage(j * 64, i * 64, &pBack, SRCAND);
 				putimage(j * 64, i * 64, &p, SRCPAINT);
-				map[i][j].isPerson = PERSON;
+				map[i][j].isPerson = true;
 			default:
 				break;
 			}
@@ -189,6 +205,16 @@ void resetBoundary(Map map[][10], char* mapFile, Node *flower) {
 	// 通过对话框获取花的数量
 	int numberOfFlower = enterNumber();
 
+	// 判断对话框输入
+	while (1) {
+		if (numberOfFlower > 47 || numberOfFlower < 0) {
+			MessageBox(GetHWnd(), (LPCSTR)"输入错误!", (LPCSTR)"逃出迷宫", MB_OK | MB_ICONERROR);
+			numberOfFlower = enterNumber();
+		} else {
+			break;
+		}
+	}
+
 	// 取随机数进行花的绘图
 	int x, y;
 	srand((unsigned)time(NULL));
@@ -196,7 +222,7 @@ void resetBoundary(Map map[][10], char* mapFile, Node *flower) {
 	while (1) {
 		x = rand() % 10;
 		y = rand() % 12;
-		if (map[y][x].property == PATH && map[y][x].isFLower != FLOWER) {
+		if (map[y][x].property == PATH && map[y][x].isFLower == false) {
 			if (count == numberOfFlower) {
 				break;
 			}
@@ -204,7 +230,7 @@ void resetBoundary(Map map[][10], char* mapFile, Node *flower) {
 			putimage(x * 64, y * 64, &f, SRCPAINT);
 
 			// 改变当前位置属性、创建节点
-			map[y][x].isFLower = FLOWER;
+			map[y][x].isFLower = true;
 			create(flower, x, y);
 			count++;
 		}
@@ -249,6 +275,9 @@ void create(Node *head, int X, int Y) {
 		s->y = Y;
 		s->next = head->next;
 		head->next = s;
+	} else {
+		MessageBox(GetHWnd(), (LPCSTR)"存储错误!", (LPCSTR)"逃出迷宫", MB_OK | MB_ICONERROR);
+		exit(EXIT_FAILURE);
 	}
 }
 void attach(Node* flower, Node* jewel, Node* bomb, int x, int y) {
@@ -260,6 +289,8 @@ void attach(Node* flower, Node* jewel, Node* bomb, int x, int y) {
 		}
 		preSwap = preSwap->next;
 	}
+
+	// 若进入此处异常，则可能是重新创建链表时错误，perSwap处于flower上且flower->next为空
 	if (!preSwap->next) {
 		MessageBox(GetHWnd(), (LPCSTR)"运行错误", (LPCSTR)"逃出迷宫", MB_OK | MB_ICONERROR);
 		exit(EXIT_FAILURE);
@@ -271,10 +302,6 @@ void attach(Node* flower, Node* jewel, Node* bomb, int x, int y) {
 		jewel->next = swap;
 	} else if (preSwap->next->status == BOMB) {
 		swap = preSwap->next;
-		if (!swap) {
-			MessageBox(GetHWnd(), (LPCSTR)"程序出现错误", (LPCSTR)"逃出迷宫", MB_OK | MB_ICONERROR);
-			exit(EXIT_FAILURE);
-		}
 		preSwap->next = swap->next;
 		swap->next = bomb->next;
 		bomb->next = swap;
@@ -303,7 +330,7 @@ void createAcquire(Node* head, int score) {
 	}
 }
 bool start() {
-	initgraph(960, 768);
+	initgraph(960, 768, EW_SHOWCONSOLE);
 	loadimage(&welcomePage, (LPCTSTR)"resource\\welcome.png", 960, 768);
 	putimage(0, 0, &welcomePage);
 	putImageNB("resource\\title_b.png", "resource\\title.png", 320, 288, 640, 0);
@@ -312,18 +339,20 @@ bool start() {
 	putImageNB("resource\\func4_b.png", "resource\\func4_c.png", 250, 60, 675, 588);
 	MOUSEMSG m;
 	while (1) {
-		m = GetMouseMsg();
-		if ((m.x >= 675 && m.x <= 925) && (m.y >= 408 && m.y <= 468) && m.uMsg == WM_LBUTTONDOWN) {
-			putImageNB("resource\\func4_b.png", "resource\\start_c.png", 250, 60, 675, 408);
-		}
-		else if ((m.x >= 675 && m.x <= 925) && (m.y >= 408 && m.y <= 468) && m.uMsg == WM_LBUTTONUP) {
-			return true;
-		}
-		if ((m.x >= 675 && m.x <= 925) && (m.y >= 588 && m.y <= 648) && m.uMsg == WM_LBUTTONDOWN) {
-			putImageNB("resource\\func4_b.png", "resource\\func4_cc.png", 250, 60, 675, 588);
-		}
-		else if ((m.x >= 675 && m.x <= 925) && (m.y >= 588 && m.y <= 648) && m.uMsg == WM_LBUTTONUP) {
-			return false;
+		if (MouseHit()) {
+			m = GetMouseMsg();
+			if ((m.x >= 675 && m.x <= 925) && (m.y >= 408 && m.y <= 468) && m.uMsg == WM_LBUTTONDOWN) {
+				putImageNB("resource\\func4_b.png", "resource\\start_c.png", 250, 60, 675, 408);
+			}
+			else if ((m.x >= 675 && m.x <= 925) && (m.y >= 408 && m.y <= 468) && m.uMsg == WM_LBUTTONUP) {
+				return true;
+			}
+			if ((m.x >= 675 && m.x <= 925) && (m.y >= 588 && m.y <= 648) && m.uMsg == WM_LBUTTONDOWN) {
+				putImageNB("resource\\func4_b.png", "resource\\func4_cc.png", 250, 60, 675, 588);
+			}
+			else if ((m.x >= 675 && m.x <= 925) && (m.y >= 588 && m.y <= 648) && m.uMsg == WM_LBUTTONUP) {
+				return false;
+			}
 		}
 	}
 }

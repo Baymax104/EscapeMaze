@@ -13,9 +13,9 @@ void move(int& x, int& y,int direction,
 	int isFlower = 0;
 
 	// 消除花、刷新人的坐标
-	if (map[y][x].isPerson == PERSON) {
+	if (map[y][x].isPerson) {
 		map[y][x].isPerson = 0;
-		if (map[y][x].isFLower == FLOWER) {
+		if (map[y][x].isFLower) {
 			map[y][x].isFLower = 0;
 			attach(flower, jewel, bomb, x, y);
 		}
@@ -27,7 +27,7 @@ void move(int& x, int& y,int direction,
 		BeginBatchDraw();
 		switch (direction) {
 		case UP: {
-			if (map[y - 1][x].isFLower == FLOWER) {
+			if (map[y - 1][x].isFLower) {
 				isFlower++;
 				if (isFlower == 64) {
 					stop = true;
@@ -36,10 +36,10 @@ void move(int& x, int& y,int direction,
 			if (map[y - 1][x].property == WALL) {
 				stop = true;
 			}
-			if ((((map[y - 2][x].property == PATH || map[y - 2][x].isFLower == FLOWER) &&
-				(map[y - 1][x - 1].property == PATH || map[y - 1][x - 1].isFLower == FLOWER))) ||
-				(((map[y - 2][x].property == PATH || map[y - 2][x].isFLower == FLOWER) &&
-				(map[y - 1][x + 1].property == PATH || map[y - 1][x + 1].isFLower == FLOWER)))) {
+			if ((((map[y - 2][x].property == PATH || map[y - 2][x].isFLower) &&
+				(map[y - 1][x - 1].property == PATH || map[y - 1][x - 1].isFLower))) ||
+				(((map[y - 2][x].property == PATH || map[y - 2][x].isFLower) &&
+				(map[y - 1][x + 1].property == PATH || map[y - 1][x + 1].isFLower)))) {
 				crossing++;
 				if (crossing == 64) {
 					stop = true;
@@ -68,7 +68,7 @@ void move(int& x, int& y,int direction,
 			break;
 		}
 		case DOWN: {
-			if (map[y + 1][x].isFLower == FLOWER) {
+			if (map[y + 1][x].isFLower) {
 				isFlower++;
 				if (isFlower == 64) {
 					stop = true;
@@ -77,10 +77,10 @@ void move(int& x, int& y,int direction,
 			if (map[y + 1][x].property == WALL) {
 				stop = true;
 			}
-			if ((((map[y + 2][x].property == PATH || map[y + 2][x].isFLower == FLOWER) &&
-				(map[y + 1][x - 1].property == PATH || map[y + 1][x - 1].isFLower == FLOWER))) ||
-				(((map[y + 2][x].property == PATH || map[y + 2][x].isFLower == FLOWER) &&
-				(map[y + 1][x + 1].property == PATH || map[y + 1][x + 1].isFLower == FLOWER)))) {
+			if ((((map[y + 2][x].property == PATH || map[y + 2][x].isFLower) &&
+				(map[y + 1][x - 1].property == PATH || map[y + 1][x - 1].isFLower))) ||
+				(((map[y + 2][x].property == PATH || map[y + 2][x].isFLower) &&
+				(map[y + 1][x + 1].property == PATH || map[y + 1][x + 1].isFLower)))) {
 				crossing++;
 				if (crossing == 64) {
 					stop = true;
@@ -109,7 +109,7 @@ void move(int& x, int& y,int direction,
 			break;
 		}
 		case LEFT: {
-			if (map[y][x - 1].isFLower == FLOWER) {
+			if (map[y][x - 1].isFLower) {
 				isFlower++;
 				if (isFlower == 64) {
 					stop = true;
@@ -118,10 +118,10 @@ void move(int& x, int& y,int direction,
 			if (map[y][x - 1].property == WALL) {
 				stop = true;
 			}
-			if ((((map[y][x - 2].property == PATH || map[y][x - 2].isFLower == FLOWER) &&
-				(map[y - 1][x - 1].property == PATH || map[y - 1][x - 1].isFLower == FLOWER))) ||
-				(((map[y][x - 2].property == PATH || map[y][x - 2].isFLower == FLOWER) &&
-				(map[y + 1][x - 1].property == PATH || map[y + 1][x - 1].isFLower == FLOWER)))) {
+			if ((((map[y][x - 2].property == PATH || map[y][x - 2].isFLower) &&
+				(map[y - 1][x - 1].property == PATH || map[y - 1][x - 1].isFLower))) ||
+				(((map[y][x - 2].property == PATH || map[y][x - 2].isFLower) &&
+				(map[y + 1][x - 1].property == PATH || map[y + 1][x - 1].isFLower)))) {
 				crossing++;
 				if (crossing == 64) {
 					stop = true;
@@ -150,7 +150,7 @@ void move(int& x, int& y,int direction,
 			break;
 		}
 		case RIGHT: {
-			if (map[y][x + 1].isFLower == FLOWER) {
+			if (map[y][x + 1].isFLower) {
 				isFlower++;
 				if (isFlower == 64) {
 					stop = true;
@@ -159,11 +159,11 @@ void move(int& x, int& y,int direction,
 			if (map[y][x + 1].property == WALL) {
 				stop = true;
 			}
-			if ((((map[y][x + 2].property == PATH || map[y][x + 2].isFLower == FLOWER || 
+			if ((((map[y][x + 2].property == PATH || map[y][x + 2].isFLower || 
 				map[y][x + 2].property == ORIGIN) &&
-				(map[y - 1][x + 1].property == PATH || map[y - 1][x + 1].isFLower == FLOWER))) ||
-				(((map[y][x + 2].property == PATH || map[y][x + 2].isFLower == FLOWER) &&
-				(map[y + 1][x + 1].property == PATH || map[y + 1][x + 1].isFLower == FLOWER)))) {
+				(map[y - 1][x + 1].property == PATH || map[y - 1][x + 1].isFLower))) ||
+				(((map[y][x + 2].property == PATH || map[y][x + 2].isFLower) &&
+				(map[y + 1][x + 1].property == PATH || map[y + 1][x + 1].isFLower)))) {
 				crossing++;
 				if (crossing == 64) {
 					stop = true;
@@ -197,9 +197,8 @@ void move(int& x, int& y,int direction,
 		}
 		EndBatchDraw();
 		if (stop == true) {
-
 			// 停下时刷新人的坐标
-			map[y][x].isPerson = PERSON;
+			map[y][x].isPerson = true;
 			break;
 		}
 	}
@@ -216,7 +215,7 @@ void spaceHit(int x, int y, Map map[][10], Node *flower) {
 	}
 
 	// 判断该位置上花的状态
-	if (map[y][x].isFLower == FLOWER  && map[y][x].isPerson == PERSON && current->isExpose == false) {
+	if (map[y][x].isFLower && map[y][x].isPerson && current->isExpose == false) {
 		if (current->status == JEWEL) {
 			putimage(x * 64, y * 64, &path[y][x]);
 			putImageNB("resource\\24_b.png", "resource\\24.png", 64, 64, x * 64, y * 64);
@@ -227,29 +226,26 @@ void spaceHit(int x, int y, Map map[][10], Node *flower) {
 			current->isExpose = true;
 		}
 	}
-	else if (map[y][x].isFLower == FLOWER && map[y][x].isPerson == PERSON && current->isExpose == true) {
+	else if (map[y][x].isFLower && map[y][x].isPerson && current->isExpose == true) {
 		putimage(x * 64, y * 64, &path[y][x]);
 		putImageNB("resource\\23_b.png", "resource\\23.png", 64, 64, x * 64, y * 64);
 		current->isExpose = false;
 	}
 }
 void mouseControl(Node* flower, Node* jewel, Node* bomb, Map map[][10], 
-				char **name, int *x, int *y, int level) {
-
-	MOUSEMSG m;
-	m = GetMouseMsg();
+				char **name, int *x, int *y, char **mapFile, int *level, MOUSEMSG m) {
 
 	// 通过mouseBounce连接函数
 	mouseBounce(35, 95, m, "resource\\func1_c.png", "resource\\func1_b.png", "resource\\func1_cc.png",
-				map, flower, jewel, bomb, name, level, display);
+				map, flower, jewel, bomb, name, display);
 	mouseBounce(105, 165, m, "resource\\func2_c.png", "resource\\func2_b.png", "resource\\func2_cc.png",
-				map, flower, jewel, bomb, name, level, increase);
+				map, flower, jewel, bomb, name, increase);
 	mouseBounce(175, 235, m, "resource\\func3_c.png", "resource\\func3_b.png", "resource\\func3_cc.png",
-				map, flower, jewel, bomb, name, level, empty);
+				map, flower, jewel, bomb, name, empty);
 	mouseBounce(245, 305, m, "resource\\func4_c.png", "resource\\func4_b.png", "resource\\func4_cc.png",
-				map, flower, jewel, bomb, name, level, quit);
+				map, flower, jewel, bomb, name, quit);
 	mouseBounce(315, 375, m, "resource\\func5_c.png", "resource\\func5_b.png", "resource\\func5_cc.png",
-				map, flower, jewel, bomb, name, level, conserveData);
+				map, flower, jewel, bomb, name, conserveData);
 
 	// importData参数不同, 需要当前坐标
 	if ((m.x >= 675 && m.x <= 925) && (m.y >= 385 && m.y <= 445) && m.uMsg == WM_LBUTTONDOWN) {
@@ -257,11 +253,11 @@ void mouseControl(Node* flower, Node* jewel, Node* bomb, Map map[][10],
 	}
 	else if ((m.x >= 675 && m.x <= 925) && (m.y >= 385 && m.y <= 445) && m.uMsg == WM_LBUTTONUP) {
 		putImageNB("resource\\func6_b.png", "resource\\func6_c.png", 250, 60, 675, 385);
-		importData(map, flower, jewel, bomb, name, x, y, level);
+		importData(map, flower, jewel, bomb, name, x, y, mapFile, level);
 	}
 }
 void mouseBounce(int y1, int y2, MOUSEMSG m, const char* img, const char* imgBack, const char* imgB,
-				Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name, int level, 
+				Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name, 
 				void (*pf)(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name)) {
 
 	if ((m.x >= 675 && m.x <= 925) && (m.y >= y1 && m.y <= y2) && m.uMsg == WM_LBUTTONDOWN) {
@@ -286,44 +282,44 @@ void display(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name) 
 	// 通过链表判断当前的花是否暴露
 	while (fCurrent != NULL) {
 		if (fCurrent->status == JEWEL && fCurrent->isExpose == false && 
-			map[fCurrent->y][fCurrent->x].isFLower == FLOWER && 
-			map[fCurrent->y][fCurrent->x].isPerson != PERSON) {
+			map[fCurrent->y][fCurrent->x].isFLower && 
+			map[fCurrent->y][fCurrent->x].isPerson == false) {
 			putimage(fCurrent->x * 64, fCurrent->y * 64, &path[fCurrent->y][fCurrent->x]);
 			putimage(fCurrent->x * 64, fCurrent->y * 64, &jBack, SRCAND);
 			putimage(fCurrent->x * 64, fCurrent->y * 64, &j, SRCPAINT);
 			fCurrent->isExpose = true;
 		}
 		else if (fCurrent->status == JEWEL && fCurrent->isExpose == false &&
-				map[fCurrent->y][fCurrent->x].isFLower == FLOWER && 
-				map[fCurrent->y][fCurrent->x].isPerson == PERSON) {
+				map[fCurrent->y][fCurrent->x].isFLower && 
+				map[fCurrent->y][fCurrent->x].isPerson) {
 			putimage(fCurrent->x * 64, fCurrent->y * 64, &path[fCurrent->y][fCurrent->x]);
 			putImageNB("resource\\24_b.png", "resource\\24.png", 64, 64, fCurrent->x * 64, fCurrent->y * 64);
 			fCurrent->isExpose = true;
 		}
 		else if (fCurrent->status == BOMB && fCurrent->isExpose == false && 
-				map[fCurrent->y][fCurrent->x].isFLower == FLOWER && 
-				map[fCurrent->y][fCurrent->x].isPerson != PERSON) {
+				map[fCurrent->y][fCurrent->x].isFLower && 
+				map[fCurrent->y][fCurrent->x].isPerson == false) {
 			putimage(fCurrent->x * 64, fCurrent->y * 64, &path[fCurrent->y][fCurrent->x]);
 			putimage(fCurrent->x * 64, fCurrent->y * 64, &bBack, SRCAND);
 			putimage(fCurrent->x * 64, fCurrent->y * 64, &b, SRCPAINT);
 			fCurrent->isExpose = true;
 		}
 		else if (fCurrent->status == BOMB && fCurrent->isExpose == false &&
-				map[fCurrent->y][fCurrent->x].isFLower == FLOWER && 
-				map[fCurrent->y][fCurrent->x].isPerson == PERSON) {
+				map[fCurrent->y][fCurrent->x].isFLower && 
+				map[fCurrent->y][fCurrent->x].isPerson) {
 			putimage(fCurrent->x * 64, fCurrent->y * 64, &path[fCurrent->y][fCurrent->x]);
 			putImageNB("resource\\25_b.png", "resource\\25.png", 64, 64, fCurrent->x * 64, fCurrent->y * 64);
 			fCurrent->isExpose = true;
 		}
-		else if (fCurrent->isExpose == true && map[fCurrent->y][fCurrent->x].isFLower == FLOWER && 
-				map[fCurrent->y][fCurrent->x].isPerson != PERSON) {
+		else if (fCurrent->isExpose == true && map[fCurrent->y][fCurrent->x].isFLower && 
+				map[fCurrent->y][fCurrent->x].isPerson == false) {
 			putimage(fCurrent->x * 64, fCurrent->y * 64, &path[fCurrent->y][fCurrent->x]);
 			putimage(fCurrent->x * 64, fCurrent->y * 64, &fBack, SRCAND);
 			putimage(fCurrent->x * 64, fCurrent->y * 64, &f, SRCPAINT);
 			fCurrent->isExpose = false;
 		}
-		else if (fCurrent->isExpose == true && map[fCurrent->y][fCurrent->x].isFLower == FLOWER &&
-			map[fCurrent->y][fCurrent->x].isPerson == PERSON) {
+		else if (fCurrent->isExpose == true && map[fCurrent->y][fCurrent->x].isFLower &&
+			map[fCurrent->y][fCurrent->x].isPerson) {
 			putimage(fCurrent->x * 64, fCurrent->y * 64, &path[fCurrent->y][fCurrent->x]);
 			putImageNB("resource\\23_b.png", "resource\\23.png", 64, 64, fCurrent->x * 64, fCurrent->y * 64);
 			fCurrent->isExpose = false;
@@ -341,7 +337,7 @@ void increase(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name)
 
 	// 通过循环不断取坐标直到符合条件
 	while (1) {
-		if (map[y][x].property == PATH && map[y][x].isFLower != FLOWER && map[y][x].isPerson != PERSON) {
+		if (map[y][x].property == PATH && map[y][x].isFLower == false && map[y][x].isPerson == false) {
 			create(flower, x, y);
 			Node* s = flower->next;
 
@@ -354,14 +350,14 @@ void increase(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name)
 						putimage(x * 64, y * 64, &jBack, SRCAND);
 						putimage(x * 64, y * 64, &j, SRCPAINT);
 						s->isExpose = true;
-						map[y][x].isFLower = FLOWER;
+						map[y][x].isFLower = true;
 						break;
 					case BOMB:
 						getimage(&path[y][x], x * 64, y * 64, 64, 64);
 						putimage(x * 64, y * 64, &bBack, SRCAND);
 						putimage(x * 64, y * 64, &b, SRCPAINT);
 						s->isExpose = true;
-						map[y][x].isFLower = FLOWER;
+						map[y][x].isFLower = true;
 						break;
 					default:
 						break;
@@ -371,14 +367,14 @@ void increase(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name)
 					getimage(&path[y][x], x * 64, y * 64, 64, 64);
 					putimage(x * 64, y * 64, &fBack, SRCAND);
 					putimage(x * 64, y * 64, &f, SRCPAINT);
-					map[y][x].isFLower = FLOWER;
+					map[y][x].isFLower = true;
 				}
 			}
 			else {
 				getimage(&path[y][x], x * 64, y * 64, 64, 64);
 				putimage(x * 64, y * 64, &fBack, SRCAND);
 				putimage(x * 64, y * 64, &f, SRCPAINT);
-				map[y][x].isFLower = FLOWER;
+				map[y][x].isFLower = true;
 			}
 			break;
 		}
@@ -407,12 +403,12 @@ void empty(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name) {
 			for (int j = 0; j < 10; j++) {
 
 				// 将有花的位置清空
-				if (map[i][j].isFLower == FLOWER) {
+				if (map[i][j].isFLower) {
 					putimage(j * 64, i * 64, &path[i][j]);
 					map[i][j].isFLower = 0;
 
 					// 若花上有人，则重新贴人
-					if (map[i][j].isPerson == PERSON) {
+					if (map[i][j].isPerson) {
 						putimage(j * 64, i * 64, &pBack, SRCAND);
 						putimage(j * 64, i * 64, &p, SRCPAINT);
 					}
@@ -420,9 +416,6 @@ void empty(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name) {
 			}
 		}
 		clear(flower);
-		clear(jewel);
-		clear(bomb);
-		initFile(name, 0, flower);
 	}
 }
 void quit(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name) {

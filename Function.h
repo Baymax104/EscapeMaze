@@ -11,9 +11,9 @@ void spaceHit(int x, int y, Map map[][10], Node *flower);
 
 // 鼠标控制
 void mouseControl(Node *flower, Node *jewel, Node *bomb, Map map[][10], 
-				char **name, int *x, int *y, int level);
+				char **name, int *x, int *y, char **mapFile, int *level, MOUSEMSG m);
 void mouseBounce(int y1, int y2, MOUSEMSG m, const char* img, const char* imgBack, const char* imgB,
-				Map map[][10], Node *flower, Node *jewel, Node *bomb, char **name, int level, 
+				Map map[][10], Node *flower, Node *jewel, Node *bomb, char **name, 
 				void (*pf)(Map map[][10], Node* flower, Node* jewel, Node* bomb, char **name));
 
 // 控制区功能
